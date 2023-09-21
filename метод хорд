@@ -1,0 +1,19 @@
+def f(x):
+    return 6 * x**4 + 4 * x**3 - x**2 - x - 10
+
+def secant_method(f, a, b, tol):
+    while abs(b - a) > tol:
+        if f(a) * f(b) == 0:
+            return a if f(a) == 0 else b 
+        else:
+            c = (a * f(b) - b * f(a)) / (f(b) - f(a))
+            a, b = b, c
+    return (a + b) / 2
+
+a = -2.0
+b = 2.0
+tolerance = 0.0001
+
+root = secant_method(f, a, b, tolerance)
+
+print("Корені знайдені методом хорд.:", root)
