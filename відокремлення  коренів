@@ -1,0 +1,24 @@
+def f(x):
+    return 6*x**4 + 4*x**3 - x**2 - x - 10
+
+def separate_roots(start, end, step):
+    intervals = []
+    a = start
+    b = a + step
+
+    while b <= end:
+        if f(a) * f(b) < 0:
+            intervals.append((a, b))
+        a = b
+        b += step
+
+    return intervals
+
+start_interval = -2.0
+end_interval = 2.0
+step_size = 0.1
+
+intervals_with_roots = separate_roots(start_interval, end_interval, step_size)
+
+for interval in intervals_with_roots:
+    print("Інтервали з коренями:", interval)
