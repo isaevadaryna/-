@@ -4,27 +4,31 @@ from scipy.interpolate import lagrange
 
 x = np.array([-2., 0., 1., 2.], dtype=float)
 f_x = np.array([30., -4., 3., 18.], dtype=float)
-x_gotten = -1.5
+x_t_values = [-1.5, -1, -0.5, 1.5]
 
-def lagrange_interpolation(x, f_x, x_gotten):
+def lagrange_int(x, f_x, x_t):
     n = len(x)
     p = np.zeros(n)
+
     for i in range(n):
         p_i = 1
         for j in range(n):
             if i != j:
-                p_i *= (x_gotten - x[j]) / (x[i] - x[j])
+                p_i *= (x_t - x[j]) / (x[i] - x[j])
         p[i] = p_i
+
     return np.dot(f_x, p)
 
-f_interp = lagrange_interpolation(x, f_x, x_gotten)
+for x_t in x_t_values:
+    f_interp = lagrange_int(x, f_x, x_t)
+    print("Значення функції у заданих точках =", x_t, ":", f_interp.round(4))
 
-print("Значення функції у заданій точці =", f_interp.round(4))
+x_new = np.linspace(np.min(x), np.max(x), 100)
+y_new = [lagrange_int(x, f_x, i) for i in x_new]
 
 #графік
-xnew = np.linspace(np.min(x), np.max(x), 100)
-ynew = [lagrange_interpolation(x, f_x, i) for i in xnew]
-plt.plot(x, f_x, 'o', xnew, ynew)
+plt.figure(figsize=(7,5))
+plt.plot(x, f_x, 'o', x_new, y_new)
 plt.title('Lagrange Polynomial')
 plt.grid(True)
 plt.show()
@@ -32,7 +36,7 @@ plt.show()
 #перевірка
 f = lagrange(x, f_x)
 fig = plt.figure(figsize = (7,5))
-plt.plot(xnew, f(xnew), 'b', x, f_x, 'ro')
+plt.plot(x_new, f(x_new), 'b', x, f_x, 'ro')
 plt.title('Lagrange Polynomial_2')
 plt.grid()
 plt.xlabel('x')
