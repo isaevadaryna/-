@@ -1,0 +1,34 @@
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = np.array([i * 0.1 for i in range(11)])
+y = np.array([ 4.4817, 4.9530, 5.4739, 6.0496, 6.6859, 7.3891, 8.1662, 9.0250, 9.9742, 11.0232, 12.1825])
+
+def interpolate(x, y, x0):
+    n = len(x)
+    result = 0
+    for i in range(n):
+        term = y[i]
+        for j in range(n):
+            if j != i:
+                term *= (x0 - x[j]) / (x[i] - x[j])
+        result += term
+    return result
+
+x1 = 0.159
+x2 = 0.234
+y1 = interpolate(x, y, x1)
+y2 = interpolate(x, y, x2)
+print(f"f({x1}) = {y1}")
+print(f"f({x2}) = {y2}")
+
+xx = np.linspace(np.min(x), np.max(x), 100)
+yy = [interpolate(x, y, xi) for xi in xx]
+
+plt.plot(x, y, 'o', label='Дані точки')
+plt.plot(xx, yy, label='Інтерполяція Ньютона')
+plt.title("Графік інтерполяційної функції Ньютона")
+plt.xlabel("x")
+plt.ylabel("y")
+plt.legend()
+plt.show()
