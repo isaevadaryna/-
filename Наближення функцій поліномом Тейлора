@@ -1,0 +1,80 @@
+# Знайти перші три похідні функції та розрахуйте значення за многочленом Тейлора. Оцініть похибку. Побудуйте на одному малюнку графік функції та наближення:
+import sympy as sp
+import numpy as np
+import matplotlib.pyplot as plt
+
+x = sp.symbols('x')
+f_x = 2 * sp.sin(5 * x)
+
+# перші три похідні
+f_prime = sp.diff(f_x, x)
+f_double_prime = sp.diff(f_prime, x)
+f_triple_prime = sp.diff(f_double_prime, x)
+
+x_value = 1.0
+
+# розклад функції в ряд Тейлора
+taylor_first_order = sp.series(f_x, x, x_value, 1).removeO()
+taylor_second_order = sp.series(f_x, x, x_value, 2).removeO()
+taylor_third_order = sp.series(f_x, x, x_value, 3).removeO()
+
+print("Перша похідна:", f_prime)
+print("Друга похідна:", f_double_prime)
+print("Третя похідна:", f_triple_prime)
+print("Многочлен Тейлора першого порядку:", taylor_first_order)
+print("Многочлен Тейлора другого порядку:", taylor_second_order)
+print("Многочлен Тейлора третього порядку:", taylor_third_order)
+
+# оцінка похибки 
+error_first_order = abs(f_x.subs(x, x_value) - taylor_first_order.subs(x, x_value))
+error_second_order = abs(f_x.subs(x, x_value) - taylor_second_order.subs(x, x_value))
+error_third_order = abs(f_x.subs(x, x_value) - taylor_third_order.subs(x, x_value))
+
+print(f"Похибка першого порядку: {error_first_order}")
+print(f"Похибка другого порядку: {error_second_order}")
+print(f"Похибка третього порядку: {error_third_order}")
+
+# графік
+x_values = np.linspace(0, 2, 400)
+f_x_values = [f_x.subs(x, val).evalf() for val in x_values]
+taylor_first_order_values = [taylor_first_order.subs(x, val).evalf() for val in x_values]
+taylor_second_order_values = [taylor_second_order.subs(x, val).evalf() for val in x_values]
+taylor_third_order_values = [taylor_third_order.subs(x, val).evalf() for val in x_values]
+
+plt.figure(figsize=(10, 6))
+plt.plot(x_values, f_x_values, label="f(x)", linewidth=2)
+plt.plot(x_values, taylor_first_order_values, label="Тейлор 1-го порядку", linestyle='--')
+plt.plot(x_values, taylor_second_order_values, label="Тейлор 2-го порядку", linestyle='--')
+plt.plot(x_values, taylor_third_order_values, label="Тейлор 3-го порядку", linestyle='--')
+plt.legend()
+plt.xlabel("x")
+plt.ylabel("Значення функції")
+plt.title("Графік функції та наближень многочленом Тейлора")
+plt.grid(True)
+plt.show()
+
+# Побудувати многочлен Тейлора  (графік) за допомогою scipy.interpolate.approximate_taylor_polynomial(f, x, degree, scale, order=None).
+import numpy as np
+import matplotlib.pyplot as plt
+from scipy.interpolate import approximate_taylor_polynomial
+
+def f(x):
+    return 2 * np.sin(5 * x)
+
+x = np.linspace(-2.0, 2.0, num=400)
+
+plt.figure(figsize=(10, 6))
+plt.plot(x, f(x), label="f(x) curve", color='blue')
+
+degree = 3
+taylor = approximate_taylor_polynomial(f, 0, degree, 1)
+print('Многочлен Тейлора =', taylor)
+
+plt.plot(x, taylor(x), label=f"degree={degree}", color='red', linestyle='--')
+
+plt.legend(loc='upper left', shadow=True)
+plt.title("Графік функції та наближення багаточленом Тейлора")
+plt.xlabel("x")
+plt.ylabel("y")
+plt.grid()
+plt.show()
