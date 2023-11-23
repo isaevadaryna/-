@@ -1,68 +1,120 @@
 #методом прямокутників за умови п=10; 
+from scipy import integrate 
 import numpy as np
-def f(x):
+
+eps = 0.001
+a = 0.4
+b = 1.2
+
+def f(x): 
     return 1 / (np.sqrt(x + 3))
 
-def rectangle_method(a, b, n):
-    h = (b - a) / n
-    result = 0
-    for i in range(n):
-        x_i = a + i * h
-        result += f(x_i)
-    result *= h
-    return result
+def left_rec(f, a, b, n): 
+    h = (b - a) / n 
+    sum = 0 
+    for i in range(0, n): 
+        sum += f(a + i * h) 
+    return sum * h 
 
-a = 0.4
-b = 1.2
-p = 10
+def right_rec(f, a, b, n): 
+    h = (b - a) / n 
+    sum = 0 
+    for i in range(1, n+1): 
+        sum += f(a + i * h) 
+    return sum * h 
 
-result = rectangle_method(a, b, p)
-print(f"Значення інтегралу методом прямокутників: {result:.4f}")
+def aver_rec(f, a, b, n): 
+    h = (b - a) / n 
+    sum = 0 
+    for i in range(0, n): 
+        sum += f(a + i * h) 
+    return sum * h 
+
+# Перевірка для лівого прямокутника
+left_result = left_rec(f, a, b, 10)
+print("Left rectangle:", round(left_result, 5)) 
+
+# Перевірка для правого прямокутника
+right_result = right_rec(f, a, b, 10)
+print("Right rectangle:", round(right_result, 5)) 
+
+# Перевірка для середнього прямокутника
+aver_result = aver_rec(f, a, b, 10)
+print("Average rectangle:", round(aver_result, 5)) 
+
+# Перевірка за допомогою quad з scipy
+v, err = integrate.quad(f, a, b)
+print("Check for the rectangle method =", round(v, 5))
 
 #методом Сімпсона за умови п=8; 
-import math
+import numpy as np
+from scipy import integrate
 
 def f(x):
-    return (2 * x + 0.5) * math.sin(x)
-
-def simpson_method(a, b, n):
-    h = (b - a) / n
-    result = f(a) + f(b)
-
-    for i in range(1, n):
-        x_i = a + i * h
-        result += 4 * f(x_i) if i % 2 != 0 else 2 * f(x_i)
-
-    result *= h / 3
-    return result
+    return 1 / np.sqrt(1.5 + 0.2 * x)
 
 a = 0.4
 b = 1.2
-p = 8
+n = 8
 
-result = simpson_method(a, b, p)
-print(f"Значення інтегралу методом Сімпсона: {result:.4f}")
+def simpson_rule(f, a, b, n):
+    h = (b - a) / n 
+    integr = f(a) + f(b) 
+    for i in range(1, n): 
+        k = a + i * h 
+        if i % 2 == 0: 
+            integr += 2 * f(k) 
+        else: 
+            integr += 4 * f(k) 
+    integr *= h / 3 
+    return integr 
+
+integral1 = simpson_rule(f, a, b, n)
+n *= 2
+integral2 = simpson_rule(f, a, b, n)
+while abs(integral2 - integral1) / 15 > 0.001:
+    integral1 = integral2
+    n *= 2
+    integral2 = simpson_rule(f, a, b, n)
+
+print("Simpson method:", round(integral2, 3))
+
+# Перевірка результату за допомогою quad з scipy
+v, err = integrate.quad(f, a, b)
+print("Check for the Simpson method:", round(v, 3))
 
 #методом трапецій за умови п=20;
+from scipy import integrate
 import numpy as np
 
 def f(x):
     return 1 / np.sqrt((0.5 * x) ** 2 + 1.5)
 
-def trapezoidal_method(a, b, n):
-    h = (b - a) / n
-    result = 0.5 * (f(a) + f(b))
-
-    for i in range(1, n):
-        x_i = a + i * h
-        result += f(x_i)
-
-    result *= h
-    return result
-
 a = 1.2
 b = 2
-p = 20
+n = 20
 
-result = trapezoidal_method(a, b, p)
-print(f"Значення інтегралу методом трапецій: {result:.4f}")
+def trapezoidal_rule(f, a, b, n):
+    h = (b - a) / n
+    x = a
+    sum = 0
+    for i in range(1, n):
+        x += h
+        sum += 2 * f(x)
+    sum += f(b)
+    integral = h / 2 * sum
+    return integral
+
+integral1 = trapezoidal_rule(f, a, b, n)
+n *= 2
+integral2 = trapezoidal_rule(f, a, b, n)
+while abs(integral2 - integral1) / 3 > 0.001:
+    integral1 = integral2
+    n *= 2
+    integral2 = trapezoidal_rule(f, a, b, n)
+
+print("Trapezoidal method:", round(integral2, 3))
+
+# Перевірка результату за допомогою quad з scipy
+v, err = integrate.quad(f, 3.2, 4)
+print("Check for the trapezoidal method:", round(v, 5))
